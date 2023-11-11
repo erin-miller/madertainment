@@ -29,8 +29,8 @@ def load_events(seconds = 3):
         # print(curr)
 
 def get_events():
-    # init list of events
-    events = []
+    # init dict of events
+    events = {}
 
     # get the elements from selenium webdriver 
     raw_events = driver.find_elements("class name", "event-list-item")
@@ -73,9 +73,17 @@ def get_events():
         description = format_data(raw_event, "class name", "event-list-item--desc")
         event["description"] = description
 
+        # setting - this is the key for the event
+        # TODO: calculate setting
+            # TODO: create date format
+            # TODO: calculate date, time, location and convert to setting
+
+        # TODO: events[setting] = event
+
         # convert the event dict into a pandas series and append it to the events list
         events.append(pd.Series(event))
     
+    # TODO: convert events into a pandas series
     return events
 
 def format_data(event, tag_or_class, tag_or_class_name):
