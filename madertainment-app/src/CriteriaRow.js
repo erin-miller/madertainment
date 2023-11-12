@@ -1,17 +1,14 @@
-const CriteriaRow = ({ criteria, onToggle }) => {
-    
-  return (
-    <tr>
-      <td>{criteria.name}</td>
-      <td>
-        <input
-          type="checkbox"
-          checked={criteria.selected}
-          onChange={() => onToggle(criteria.name)}
-        />
-      </td>
-    </tr>
-  );
+import Checkbox from "./Checkbox"
+const CriteriaRow = ({ criteria }) => {
+
+    return (
+        <tr>
+            <td>{criteria.name}</td>
+            <div>
+                <Checkbox label={criteria.name} />
+            </div>
+        </tr>
+    );
 };
 
 export default CriteriaRow;

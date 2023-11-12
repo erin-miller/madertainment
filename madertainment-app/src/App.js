@@ -9,7 +9,7 @@ const App = () => {
     const [data, setData] = useState(null);
 
     useEffect(() => {
-        fetch('/api/data')
+        fetch('../../data.txt')
             .then((response) => response.json())
             .then((result) => setData(result));
     }, []);
@@ -28,7 +28,8 @@ const App = () => {
 
     // for each criteria in criteriaData, if the critera's name matches criteriaName, then flip selected
     const handleToggle = (criteriaName) => {
-        setCriteriaData((criteriaData.map((criteria) =>
+        setCriteriaData((criteriaData) =>
+        (criteriaData.map((criteria) =>
             criteria.name === criteriaName ? (!criteria.selected) : criteria
         )))
     };
