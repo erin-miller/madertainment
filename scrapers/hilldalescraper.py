@@ -13,6 +13,7 @@ events = {}
 
 # collect all of the events' expanded links for scraping later
 def load_events():
+    global web_driver, index
     # get the 1st page
     web_driver.get("https://hilldale.com/events/list/page/" + str(index))
 
@@ -50,11 +51,13 @@ def get_events():
             converted_date = convert_date_range(date_time_raw)
         else:
             converted_date = convert_single_date(date_time_raw)
-        event_date = converted_date.replace('1900', '2023')
+        event_date = eventdate.EventDate(converted_date.replace('1900', '2023'))
         event_location = "Hilldale Shopping Mall" # no location info but they're all at hilldale
         event_time = extract_first_time(date_time_raw)
+        if event_time is not None:
+            event_time = re.sub(r"\s", "", event_time)
 
-        event_setting = eventsetting.EventSetting(event_date, event_location, event_time)
+        event_setting = eventsetting.EventSetting(event_date, event_time, event_location)
 
         # load data into event
         event["name"] = name
