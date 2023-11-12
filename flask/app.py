@@ -1,13 +1,16 @@
-from flask import Flask, jsonify
-from flask_cors import CORS
+from flask import Flask, send_file, render_template
+from flask_cors import CORS  # Import the CORS module
 
 app = Flask(__name__)
-CORS(app)  # Enable CORS for all routes
+CORS(app)
 
-@app.route('/api/data', methods=['GET'])
+@app.route("/")
+def index():
+    return render_template('index.html')
+
+@app.route('/get_data', methods=['GET'])
 def get_data():
-    data = {'message': 'Hello from Flask!'}
-    return jsonify(data)
+    return send_file('data.json', mimetype='application/json')
 
 if __name__ == '__main__':
-    app.run(port=5000, debug=True)
+    app.run(host="localhost", debug=True)

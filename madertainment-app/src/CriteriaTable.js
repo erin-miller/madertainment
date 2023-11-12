@@ -1,4 +1,5 @@
 import CriteriaCategoryRow from './CriteriaCategoryRow';
+import CriteriaRow from './CriteriaRow';
 
 const CriteriaTable = ({ criteriaData, onToggle }) => {
     const rows = [];
@@ -8,17 +9,17 @@ const CriteriaTable = ({ criteriaData, onToggle }) => {
         // do not start a new row until a different category is found
         if (criteria.category !== lastCategory) {
             rows.push(
-            <CriteriaCategoryRow
-                        criteria={criteria.category}
-                        key={criteria.category}
-                        />
-                        )
+                <CriteriaCategoryRow
+                    criteria={criteria.category}
+                    key={criteria.category}
+                />
+            )
         }
         rows.push(
-            <CriteriaRow 
-            criteria = {criteria}
-            onToggle = {onToggle}
-            key={criteria.name}
+            <CriteriaRow
+                criteria={criteria}
+                onToggle = {onToggle}
+                key={criteria.name}
             />
         )
         lastCategory = criteria.category
@@ -27,10 +28,10 @@ const CriteriaTable = ({ criteriaData, onToggle }) => {
     rows.push()
 
     return (
-        <table>
-          <tbody>{rows}</tbody>
+        <table className="criteria-table">
+            <tbody>{rows}</tbody>
         </table>
-      );
+    );
 };
 
 export default CriteriaTable;
