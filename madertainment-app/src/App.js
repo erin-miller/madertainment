@@ -23,9 +23,9 @@ export const App = () => {
     };
 
     const [criteriaData, setCriteriaData] = useState([
-        { category: "Time", name: 'Morning (6am-10:59am)', selected: false },
-        { category: "Time", name: 'Afternoon (11am-5:59pm)', selected: false },
-        { category: "Time", name: 'Night (6pm-12am)', selected: false },
+        // { category: "Time", name: 'Morning (6am-10:59am)', selected: false },
+        // { category: "Time", name: 'Afternoon (11am-5:59pm)', selected: false },
+        // { category: "Time", name: 'Night (6pm-12am)', selected: false },
         { category: "Other", name: 'Free', selected: false }, // if event.price == 'Free'
     ]);
 
@@ -41,7 +41,7 @@ export const App = () => {
     return (
         <div className="App">
             <PageTitle title="Madertainment" />
-            <SearchBar />
+            {/* <SearchBar /> */}
             <CriteriaTable criteriaData={criteriaData} onToggle={handleToggle} />
             {/* Maps every filtered event into a box and renders it */}
             <EventTable eventData={filtered} />
