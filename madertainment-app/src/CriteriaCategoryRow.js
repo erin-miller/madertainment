@@ -1,15 +1,9 @@
-import CriteriaRow from './CriteriaRow';
-
-const CriteriaCategoryRow = ({ category, onToggle }) => {
+const CriteriaCategoryRow = ({ category }) => {
   return (
     <>
       <tr>
-        <th colSpan="2">{category.name}</th>
+        <th colSpan="2">{category}</th>
       </tr>
-      {/* Maps each criteria to a row in this category */}
-      {category.criteria.map((criteria, index) => (
-        <CriteriaRow key={index} criteria={criteria} onToggle={onToggle} />
-      ))}
     </>
   );
 };

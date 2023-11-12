@@ -1,4 +1,5 @@
 const CriteriaRow = ({ criteria, onToggle }) => {
+    
   return (
     <tr>
       <td>{criteria.name}</td>
