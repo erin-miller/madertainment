@@ -3,11 +3,11 @@ import React from 'react';
 import PageTitle from './PageTitle';
 import CriteriaTable from './CriteriaTable';
 import EventTable from './EventTable'
-import Box from './Box';
 import { useState, useEffect } from 'react';
 
 const App = () => {
     const [events, setEvents] = useState([]);
+    const [filtered, setFiltered] = useState(deepCopyArray(events));
 
     useEffect(() => {
         fetchData();
@@ -31,26 +31,43 @@ const App = () => {
     ])
 
     // for each criteria in criteriaData, if the critera's name matches criteriaName, then flip selected
-    const handleToggle = (criteriaName) => {
-        setCriteriaData((criteriaData) =>
-        (criteriaData.map((criteria) =>
-            criteria.name === criteriaName ? (!criteria.selected) : criteria
-        )))
-    };
+    const handleToggle = (criteria) => {
+        criteriaData.filter(crit => crit.name === criteria.name).forEach((item) => {item.selected = !item.selected})
 
-    const filteredEvents = 
-        events.filter(event =>
-            criteriaData.some(criteria => 
-                event.price === criteria.name))
+        let count = 0;
+        let temp = events.filter(event => {
+            for (const criteria of criteriaData) {
+                    if (criteria.name === event.price) {
+                        if (criteria.selected) {
+                            count += 1;
+                            return true;
+                        }
+                    }
+                }
+                return false; 
+            });
+        
+        if (count === 0) {
+            setFiltered(deepCopyArray(events));
+        } else {
+            setFiltered(deepCopyArray(temp));
+        }
+    };
 
     return (
         <div className="App">
             <PageTitle title="Madertainment" />
             <CriteriaTable criteriaData={criteriaData} onToggle={handleToggle} />
             {/* Maps every filtered event into a box and renders it */}
-            <EventTable eventData={filteredEvents} />
+            <EventTable eventData={filtered}/>
         </div>
     );
 }
+
+function deepCopyArray(arr) {
+    return JSON.parse(JSON.stringify(arr));
+}
+
+function 
 
 export default App;

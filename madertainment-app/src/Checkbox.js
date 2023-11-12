@@ -8,6 +8,7 @@ const Checkbox = ({ criteria, onToggle }) => {
                 <input type="checkbox" isChecked={isChecked} onChange={() => {
                     setIsChecked((prev) => !prev);
                     onToggle(criteria)
+                    console.log(criteria);
                     }} />
             </label>
             <span>{criteria.name}</span>
