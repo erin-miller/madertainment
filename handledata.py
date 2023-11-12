@@ -34,7 +34,7 @@ def update_data():
     pretty_json_string = json.dumps(json.loads(all_data_as_json), indent=2)
 
     # write the resulting json to "all_json.json"
-    with open("all_json.json", 'w') as json_file:
+    with open("flask/data.json", 'w') as json_file:
         json_file.write(pretty_json_string)
 
 def get_json_as_string():
