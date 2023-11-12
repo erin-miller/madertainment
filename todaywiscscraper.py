@@ -38,7 +38,7 @@ def load_events():
 
 def scrape(urls):
     # TODO: implement multithreading to scrape a large amount of urls at once
-
+    
     # make a new driver
     driver2 = driver.get_driver()
     driver2.get(link)
@@ -50,8 +50,9 @@ def scrape(urls):
     description = format_data(driver2, "class name", "event-description")
     location = format_data(driver2, "class name", "event-location")
     time = format_data(driver2, "class name", "event-time")
+    event_time = re.sub(r"\s", "", time)
     event_date = eventdate.EventDate(date=date)
-    event_setting = eventsetting.EventSetting(event_date, time, location)
+    event_setting = eventsetting.EventSetting(event_date, event_time, location)
 
     # load data into event
     event["name"] = name
@@ -112,10 +113,12 @@ def get_events():
                     price = None # no price information on this page :(
                     description = None # no real description either
                     event_date = eventdate.EventDate(date)
-                    event_time = format_data(events_in_day[j], "class name", "event-time")
-
+                    time = format_data(events_in_day[j], "class name", "event-time")
+                    if time is not None:
+                        time = re.sub(r"\s", "", time)
                     event_location = format_data(events_in_day[j], "class name", "event-location")
-                    setting = eventsetting.EventSetting(event_date, event_time, event_location)
+
+                    setting = eventsetting.EventSetting(event_date, time, event_location)
 
                     # load the event into event
                     event["name"] = name
