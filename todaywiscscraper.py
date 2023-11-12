@@ -5,17 +5,17 @@ from selenium.common.exceptions import NoSuchElementException
 import eventdate, eventtime, eventlocation, eventsetting
 from datetime import datetime
 import re
-from concurrent.futures import ThreadPoolExecutor # multithreading
+from concurrent.futures import ThreadPoolExecutor, as_completed # multithreading
 
 driver1 = driver.get_driver()
 
 # global list of events
 events = {}
 
-# create a list of links because we need to use multithreading to scrape a large amount of pages at once
-# this list will ONLY hold today.wisc.edu links because we need to load a large amount of pages seperately
+# create a dict of links and dates because we need to use multithreading to scrape a large amount of pages at once
+# this dict will ONLY hold today.wisc.edu links because we need to load a large amount of pages seperately
 # this list will be scraped in scrape()
-links = []
+links = {}
 
 # dict used for date processing
 month_to_number = {
@@ -37,23 +37,28 @@ def load_events():
     # this website doesn't use a button to load more events but instead relies on page indexing
     pass
 
-def scrape(urls):
-    # TODO: implement multithreading to scrape a large amount of urls at once
+# helper method for scrape()
+def scrape_page(url, date):
+    global events
+    # Initialize WebDriver
+    driver_multi = driver.get_driver()
 
-    # make a new driver
-    driver2 = driver.get_driver()
-    driver2.get(link)
+    # Navigate to the URL
+    driver_multi.get(url)
 
-    # TODO: scrape https://today.wisc.edu/events/view/188842 or similar
-    name = format_data(driver2, "class name", "view-event-title")
+    # create blank event
+    event = {}
+
+    name = format_data(driver_multi, "class name", "view-event-title")
     category = None # TODO: maybe we can generate category from description?
-    price = format_data(driver2, "class name", "event-cost")
-    description = format_data(driver2, "class name", "event-description")
-    location = format_data(driver2, "class name", "event-location")
-    time = format_data(driver2, "class name", "event-time")
-    event_time = re.sub(r"\s", "", time)
+    price = format_data(driver_multi, "class name", "event-cost")
+    description = format_data(driver_multi, "class name", "event-description")
+    location = format_data(driver_multi, "class name", "event-location")
+    time = format_data(driver_multi, "class name", "event-time")
+    if time is not None:
+        time = re.sub(r"\s", "", time)
     event_date = eventdate.EventDate(date=date)
-    event_setting = eventsetting.EventSetting(event_date, event_time, location)
+    event_setting = eventsetting.EventSetting(event_date, time, location)
 
     # load data into event
     event["name"] = name
@@ -63,12 +68,23 @@ def scrape(urls):
     event["setting"] = event_setting
 
     # load event into events using setting as the key
-    events[event_setting] = event
-        
-    # quit the driver2 so we don't run out of ram lmao
-    driver2.quit()
+    events[event_setting] = pd.Series(event)
+
+    # quit the driver
+    driver_multi.quit()
+
+def scrape():
+
+    # NOTE: to improve performance, you can take a subset of each of the below. 100 urls/dates runs pretty quick.
+
+    urls = list(links.keys())
+    dates = list(links.values())
+
+    with ThreadPoolExecutor(max_workers=50) as executor:
+        executor.map(scrape_page, urls, dates)
 
 def get_events():
+    global events
     # create index for searching https://today.wisc.edu/events/index.html?page=<index>
     index = 1
     url = "https://today.wisc.edu/events/index.html?page="
@@ -109,7 +125,7 @@ def get_events():
                 pattern = re.compile(r'today\.wisc\.edu')
                 match = pattern.search(link)
                 if match:
-                    links.append(link) # add the link to be multithreaded later
+                    links[link] = date # add the link to be multithreaded later
                 else:
                     # extract data
                     name = format_data(events_in_day[j], "class name", "event-title")
@@ -139,10 +155,10 @@ def get_events():
         index += 1
         driver1.get("https://today.wisc.edu/events/index.html?page=" + str(index))
 
-    # TODO: call scrape() to scrape the https://today.wisc.edu/events/view/<n> urls
-    # scrape()
+    # call scrape() to scrape the https://today.wisc.edu/events/view/<n> urls
+    scrape()
 
-    # return events as a series
+    # return pandas series
     return pd.Series(events)
 
 
@@ -156,9 +172,15 @@ def format_data(event, tag_or_class, tag_or_class_name):
     return data
 
 # debug
-events = get_events()
-print()
-print(len(links))
-print(len(events))
-for event in events:
-    print(event.to_json())
+# get_events()
+# print()
+# print(len(links))
+# print(len(events))
+
+# events_pd = pd.Series(events)
+
+# json_data = events_pd.to_json()
+
+# # Save the JSON data to a local file
+# with open('output.json', 'w') as json_file:
+#     json_file.write(json_data)
