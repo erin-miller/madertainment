@@ -241,15 +241,15 @@ def format_data(event, tag_or_class, tag_or_class_name):
     return data
 
 # debug
-get_events()
-print()
-print(len(links))
-print(len(events))
+# get_events()
+# print()
+# print(len(links))
+# print(len(events))
 
-events_pd = pd.Series(events)
+# events_pd = pd.Series(events)
 
-json_data = events_pd.to_json()
+# json_data = events_pd.to_json()
 
-# Save the JSON data to a local file
-with open('output.json', 'w') as json_file:
-    json_file.write(json_data)
+# # Save the JSON data to a local file
+# with open('output.json', 'w') as json_file:
+#     json_file.write(json_data)
