@@ -1,5 +1,6 @@
 from scrapers import unionscraper
 from scrapers import todaywiscscraper
+from scrapers import hilldalescraper
 import pandas as pd
 import json
 import numpy as np
@@ -15,12 +16,17 @@ def update_data():
     unionscraper.load_events()
     union_events = unionscraper.get_events()
 
+    # load and get hilldale events
+    hilldalescraper.load_events()
+    hilldale_events = hilldalescraper.get_events()
+
     # get raw values for all events
     today_raw = today_wisc_events.values
     union_raw = union_events.values
+    hilldale_raw = hilldale_events
 
     # combine all raw data into one np array
-    combined_raw_data = np.concatenate((today_raw, union_raw), axis=0)
+    combined_raw_data = np.concatenate((today_raw, union_raw, hilldale_raw), axis=0)
 
     # create and format the json string containing all data
     all_data_as_json = "["
