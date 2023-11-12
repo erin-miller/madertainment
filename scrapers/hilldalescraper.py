@@ -103,7 +103,7 @@ def format_data(event, tag_or_class, tag_or_class_name):
     return data
 
 # debug
-load_events()
-events = get_events()
-for event in events:
-    print(event.to_json())
+# load_events()
+# events = get_events()
+# for event in events:
+#     print(event.to_json())
