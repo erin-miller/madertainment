@@ -63,13 +63,12 @@ def get_events():
                 # create event dict to be added to events later
                 event = {}
 
-                # get the name of the event
-                name = format_data(events_in_day[j], "class name", "event-title")
-
                 # get the link on the name of the event to check in the next condition
                 link = events_in_day[j].find_element("tag name", "a").get_property("href")
 
-                if len(re.findall(link, r"/events/view")) > 0:
+                pattern = re.compile(r'today\.wisc\.edu')
+                match = pattern.search(link)
+                if match:
                     # if the link in the name of the event is another today.wisc.edu link, we can get more details easily
                     
                     # save the current url
