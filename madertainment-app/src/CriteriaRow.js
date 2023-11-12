@@ -1,11 +1,10 @@
 import Checkbox from "./Checkbox"
-const CriteriaRow = ({ criteria }) => {
+const CriteriaRow = ({ criteria, onToggle }) => {
 
     return (
         <tr>
-            <td>{criteria.name}</td>
             <div>
-                <Checkbox label={criteria.name} />
+                <Checkbox criteria={criteria} onToggle={onToggle} key={criteria}/>
             </div>
         </tr>
     );

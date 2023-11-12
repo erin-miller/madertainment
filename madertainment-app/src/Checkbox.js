@@ -1,10 +1,16 @@
-const Checkbox = ({ text }) => {
+import { useState } from 'react';
+
+const Checkbox = ({ criteria, onToggle }) => {
+    const [isChecked, setIsChecked] = useState(false);
     return (
         <div className="checkbox-wrapper">
             <label>
-                <input type="checkbox" />
-                <span>{text}</span>
+                <input type="checkbox" isChecked={isChecked} onChange={() => {
+                    setIsChecked((prev) => !prev);
+                    onToggle(criteria)
+                    }} />
             </label>
+            <span>{criteria.name}</span>
         </div>
     );
 };

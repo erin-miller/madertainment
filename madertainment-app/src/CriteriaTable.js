@@ -18,7 +18,7 @@ const CriteriaTable = ({ criteriaData, onToggle }) => {
         rows.push(
             <CriteriaRow
                 criteria={criteria}
-                onToggle={onToggle}
+                onToggle = {onToggle}
                 key={criteria.name}
             />
         )

@@ -39,7 +39,7 @@ const App = () => {
 
     // For every event in events, choose each one that matches all selected criteria or is free (if free is selected)
     const filteredEvents = events.filter((event) => {
-        return criteriaData.every((criteria) => criteria.selected || (event.price === criteria.name && criteria.selected));
+        return criteriaData.some((criteria) => event.price === criteria.name && criteria.selected);
     });
 
     return (
@@ -47,8 +47,8 @@ const App = () => {
             <PageTitle title="Madertainment" />
             <CriteriaTable criteriaData={criteriaData} onToggle={handleToggle} />
             {/* Maps every filtered event into a box and renders it */}
-            {events.map((event) => (
-                <Box event={event} />
+            {filteredEvents.map((event) => (
+                <h1>{event.name}</h1>
             ))}
             
         </div>
