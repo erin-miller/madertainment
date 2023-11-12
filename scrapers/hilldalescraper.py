@@ -1,6 +1,6 @@
-import driver
+from scrapers import driver
 import pandas as pd
-import eventdate, eventtime, eventlocation, eventsetting
+from scrapers import eventdate, eventtime, eventlocation, eventsetting
 from datetime import datetime, timedelta
 from selenium.common.exceptions import NoSuchElementException
 import re

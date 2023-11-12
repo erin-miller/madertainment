@@ -1,13 +1,10 @@
-import driver
+from scrapers import driver
 import pandas as pd
 import time
 from selenium.common.exceptions import NoSuchElementException
-import eventdate, eventtime, eventlocation, eventsetting
+from scrapers import eventdate, eventtime, eventlocation, eventsetting
 from datetime import datetime
 import re
-
-driver = driver.get_driver()
-driver.get("https://union.wisc.edu/events-and-activities/event-calendar/")
 
 # dict for converting Union-specific month format "JAN, FEB, etc." to month numbers 01-12
 month_dict = {
@@ -25,24 +22,27 @@ month_dict = {
     'DEC': '12'
 }
 
+web_driver = driver.get_driver()
+web_driver.get("https://union.wisc.edu/events-and-activities/event-calendar/")
+
 def load_events(seconds = 3):
     # locate the "load more" button
-    load_button = driver.find_element("class name", "js-infinite-scroll__btn")
+    load_button = web_driver.find_element("class name", "js-infinite-scroll__btn")
     
     # continue to click on "load more" until we have all of the events loaded
     last = -1
-    curr = len(driver.find_elements("class name", "event-list-item"))
+    curr = len(web_driver.find_elements("class name", "event-list-item"))
     while last != curr:
         last = curr
         # click the button to load 9 more events
-        driver.execute_script("arguments[0].click();", load_button)
+        web_driver.execute_script("arguments[0].click();", load_button)
 
         # give the page a second to load
         # NOTE: 3 seconds seems to be consistent. if the page loads slower, the loading may stop and we may not get all of the events
         time.sleep(seconds)
 
         # update curr
-        curr = len(driver.find_elements("class name", "event-list-item"))
+        curr = len(web_driver.find_elements("class name", "event-list-item"))
 
         # debug: see how many events are being loaded
         # print(curr)
@@ -52,7 +52,7 @@ def get_events():
     events = {}
 
     # get the elements from selenium webdriver 
-    raw_events = driver.find_elements("class name", "event-list-item")
+    raw_events = web_driver.find_elements("class name", "event-list-item")
 
     # loop through each event
     for raw_event in raw_events:

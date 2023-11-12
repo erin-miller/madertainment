@@ -1,8 +1,8 @@
-import driver
+from scrapers import driver
 import pandas as pd
 import time
 from selenium.common.exceptions import NoSuchElementException
-import eventdate, eventtime, eventlocation, eventsetting
+from scrapers import eventdate, eventtime, eventlocation, eventsetting
 from datetime import datetime
 import re
 from concurrent.futures import ThreadPoolExecutor, as_completed # multithreading
