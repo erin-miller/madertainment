@@ -28,7 +28,7 @@ const CriteriaTable = ({ criteriaData, onToggle }) => {
     rows.push()
 
     return (
-        <table>
+        <table className="criteria-table">
             <tbody>{rows}</tbody>
         </table>
     );

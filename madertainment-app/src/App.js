@@ -1,7 +1,8 @@
-import React from 'react';
+import { useState, useEffect } from 'react';
 import PageTitle from './PageTitle';
 import CriteriaTable from './CriteriaTable';
 import EventTable from './EventTable'
+import SearchBar from './SearchBar';
 
 export const App = () => {
     const [events, setEvents] = useState([]);
@@ -40,6 +41,7 @@ export const App = () => {
     return (
         <div className="App">
             <PageTitle title="Madertainment" />
+            <SearchBar />
             <CriteriaTable criteriaData={criteriaData} onToggle={handleToggle} />
             {/* Maps every filtered event into a box and renders it */}
             <EventTable eventData={filtered} />

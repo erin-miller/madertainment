@@ -27,7 +27,7 @@ const EventTable = ({ eventData }) => {
     rows.push()
 
     return (
-        <table>
+        <table className="event-table">
             <tbody>{rows}</tbody>
         </table>
     );
