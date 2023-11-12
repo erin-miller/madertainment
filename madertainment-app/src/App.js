@@ -2,6 +2,7 @@
 import React from 'react';
 import PageTitle from './PageTitle';
 import CriteriaTable from './CriteriaTable';
+import EventTable from './EventTable'
 import Box from './Box';
 import { useState, useEffect } from 'react';
 
@@ -11,7 +12,7 @@ const App = () => {
     useEffect(() => {
         fetchData();
     }, []);
-    
+
     const fetchData = async () => {
         try {
             const response = await fetch('http://localhost:5000/get_data');
@@ -37,22 +38,19 @@ const App = () => {
         )))
     };
 
-    // For every event in events, choose each one that matches all selected criteria or is free (if free is selected)
-    const filteredEvents = events.filter((event) => {
-        return criteriaData.some((criteria) => event.price === criteria.name && criteria.selected);
-    });
+    const filteredEvents = 
+        events.filter(event =>
+            criteriaData.some(criteria => 
+                event.price === criteria.name))
 
     return (
         <div className="App">
             <PageTitle title="Madertainment" />
             <CriteriaTable criteriaData={criteriaData} onToggle={handleToggle} />
             {/* Maps every filtered event into a box and renders it */}
-            {filteredEvents.map((event) => (
-                <h1>{event.name}</h1>
-            ))}
-            
+            <EventTable eventData={filteredEvents} />
         </div>
     );
-};
+}
 
 export default App;
