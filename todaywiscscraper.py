@@ -6,7 +6,15 @@ import eventdate, eventtime, eventlocation, eventsetting
 from datetime import datetime
 import re
 
-driver = driver.get_driver()
+driver1 = driver.get_driver()
+
+# global list of events
+events = {}
+
+# create a list of links because we need to use multithreading to scrape a large amount of pages at once
+# this list will ONLY hold today.wisc.edu links because we need to load a large amount of pages seperately
+# this list will be scraped in scrape()
+links = []
 
 # dict used for date processing
 month_to_number = {
@@ -28,27 +36,54 @@ def load_events():
     # this website doesn't use a button to load more events but instead relies on page indexing
     pass
 
-def get_events():
-    # create events dict
-    events = {}
+def scrape(urls):
+    # TODO: implement multithreading to scrape a large amount of urls at once
 
+    # make a new driver
+    driver2 = driver.get_driver()
+    driver2.get(link)
+
+    # TODO: scrape https://today.wisc.edu/events/view/188842 or similar
+    name = format_data(driver2, "class name", "view-event-title")
+    category = None # TODO: maybe we can generate category from description?
+    price = format_data(driver2, "class name", "event-cost")
+    description = format_data(driver2, "class name", "event-description")
+    location = format_data(driver2, "class name", "event-location")
+    time = format_data(driver2, "class name", "event-time")
+    event_date = eventdate.EventDate(date=date)
+    event_setting = eventsetting.EventSetting(event_date, time, location)
+
+    # load data into event
+    event["name"] = name
+    event["category"] = category
+    event["price"] = price
+    event["description"] = description
+    event["setting"] = event_setting
+
+    # load event into events using setting as the key
+    events[event_setting] = event
+        
+    # quit the driver2 so we don't run out of ram lmao
+    driver2.quit()
+
+def get_events():
     # create index for searching https://today.wisc.edu/events/index.html?page=<index>
     index = 1
     url = "https://today.wisc.edu/events/index.html?page="
-    driver.get("https://today.wisc.edu/events/index.html?page=" + str(index))
+    driver1.get("https://today.wisc.edu/events/index.html?page=" + str(index))
 
-    while len(driver.find_elements("class name", "day-row-header")) > 0:
+    while len(driver1.find_elements("class name", "day-row-header")) > 0:
         # get headers. these headers contain dates
-        headers = driver.find_elements("class name", "day-row-header")
+        headers = driver1.find_elements("class name", "day-row-header")
 
         # get the events lists
-        events_lists_by_day = driver.find_elements("class name", "events-list")
+        events_lists_by_day = driver1.find_elements("class name", "events-list")
 
         # iterate through each day. events_list_by_day[i] cooresponds to the events on day headers[i]
         for i in range(len(headers)):
             # get the raw day in format: Sunday, November 12, 2023
             day_raw = headers[i].text
-            
+
             # process day_raw into "MM-DD-YYYY" format
             year = day_raw.split(", ")[2]
             month = month_to_number[day_raw.split(", ")[1].split(" ")[0]]
@@ -69,49 +104,35 @@ def get_events():
                 pattern = re.compile(r'today\.wisc\.edu')
                 match = pattern.search(link)
                 if match:
-                    # if the link in the name of the event is another today.wisc.edu link, we can get more details easily
-                    
-                    # save the current url
-                    url_capture = driver.current_url
+                    links.append(link) # add the link to be multithreaded later
+                else:
+                    # extract data
+                    name = format_data(events_in_day[j], "class name", "event-title")
+                    category = None # TODO: maybe use keywords to generate a category?
+                    price = None # no price information on this page :(
+                    description = None # no real description either
+                    event_date = eventdate.EventDate(date)
+                    event_time = format_data(events_in_day[j], "class name", "event-time")
 
-                    # update the driver to the new url
-                    driver.get(link)
+                    event_location = format_data(events_in_day[j], "class name", "event-location")
+                    setting = eventsetting.EventSetting(event_date, event_time, event_location)
 
-                    # TODO: scrape https://today.wisc.edu/events/view/188842 or similar
-                    name = format_data(driver, "class name", "view-event-title")
-                    category = None # TODO: maybe we can generate category from description?
-                    price = format_data(driver, "class name", "event-cost")
-                    description = format_data(driver, "class name", "event-description")
-                    location = format_data(driver, "class name", "event-location")
-                    time = format_data(driver, "class name", "event-time")
-                    event_date = eventdate.EventDate(date=date)
-                    event_setting = eventsetting.EventSetting(event_date, time, location)
-
-                    # load data into event
+                    # load the event into event
                     event["name"] = name
                     event["category"] = category
                     event["price"] = price
                     event["description"] = description
-                    event["setting"] = event_setting
+                    event["setting"] = setting
 
-                    # load event into events using setting as the key
-                    events[event_setting] = event
+                    event = pd.Series(event)
 
-                else:
-                    # do nothing for now
-                    pass
-        
-        # increment index by 1 and go to the next page
+                    # add event to events using setting as key and event as value
+                    events[setting] = event
+
         index += 1
-        driver.get("https://today.wisc.edu/events/index.html?page=" + str(index))
-    # TODO: loop through https://today.wisc.edu/events/index.html?page=<n> until data stops getting found
-    # TODO: for each page, scrape data
-        # TODO: create event dict for each event
-    # TODO: collect name, category, price (no prices here), description, setting (setting has date, location, time)
-    # TODO: after collection, create setting, location, time
-    # TODO: fill out event dict
-    # TODO: add event to events dict using the setting as the key and event as value
-    # return the events dict as a pandas series
+        driver1.get("https://today.wisc.edu/events/index.html?page=" + str(index))
+
+    # return events as a series
     return pd.Series(events)
 
 
@@ -126,5 +147,8 @@ def format_data(event, tag_or_class, tag_or_class_name):
 
 # debug
 events = get_events()
+print()
+print(len(links))
+print(len(events))
 for event in events:
-    print(event.to_json() + "\n")
+    print(event.to_json())
