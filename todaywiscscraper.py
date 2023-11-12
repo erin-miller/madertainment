@@ -5,6 +5,7 @@ from selenium.common.exceptions import NoSuchElementException
 import eventdate, eventtime, eventlocation, eventsetting
 from datetime import datetime
 import re
+from concurrent.futures import ThreadPoolExecutor # multithreading
 
 driver1 = driver.get_driver()
 
@@ -38,7 +39,7 @@ def load_events():
 
 def scrape(urls):
     # TODO: implement multithreading to scrape a large amount of urls at once
-    
+
     # make a new driver
     driver2 = driver.get_driver()
     driver2.get(link)
@@ -89,7 +90,10 @@ def get_events():
             year = day_raw.split(", ")[2]
             month = month_to_number[day_raw.split(", ")[1].split(" ")[0]]
             day = day_raw.split(", ")[1].split(" ")[1]
-            date = month + "-" + day + "-" + year
+            day_extended = day
+            if len(day) == 1:
+                day_extended = "0" + day
+            date = month + "-" + day_extended + "-" + year
 
             # get a list of events in this day
             events_in_day = events_lists_by_day[i].find_elements("class name", "event-details")
@@ -134,6 +138,9 @@ def get_events():
 
         index += 1
         driver1.get("https://today.wisc.edu/events/index.html?page=" + str(index))
+
+    # TODO: call scrape() to scrape the https://today.wisc.edu/events/view/<n> urls
+    # scrape()
 
     # return events as a series
     return pd.Series(events)
