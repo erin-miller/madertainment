@@ -55,7 +55,7 @@ def scrape_page(url, date):
     description = format_data(driver_multi, "class name", "event-description")
     location = format_data(driver_multi, "class name", "event-location")
     time = format_data(driver_multi, "class name", "event-time")
-    if time is not None:
+    if time is not None and time != "All day":
         time = re.sub(r"\s", "", time)
     event_date = eventdate.EventDate(date=date)
     event_setting = eventsetting.EventSetting(event_date, time, location)
