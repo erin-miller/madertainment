@@ -4,6 +4,8 @@ import pandas as pd
 import json
 import numpy as np
 
+pretty_json_string = ""
+
 def update_data():
     # load and get today.wisc.edu events
     todaywiscscraper.load_events()
@@ -34,3 +36,10 @@ def update_data():
     # write the resulting json to "all_json.json"
     with open("all_json.json", 'w') as json_file:
         json_file.write(pretty_json_string)
+
+def get_json_as_string():
+    if len(pretty_json_string) == 0:
+        # the data hasn't been loaded yet
+        return None
+    else:
+        return pretty_json_string
