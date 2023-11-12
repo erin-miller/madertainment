@@ -1,6 +1,7 @@
 from scrapers import unionscraper
 from scrapers import todaywiscscraper
 from scrapers import hilldalescraper
+from scrapers import isthmusscraper
 import pandas as pd
 import json
 import numpy as np
@@ -20,13 +21,18 @@ def update_data():
     hilldalescraper.load_events()
     hilldale_events = hilldalescraper.get_events()
 
+    # load and get isthmuss events
+    isthmusscraper.load_events()
+    isthmuss_events = isthmusscraper.get_events()
+
     # get raw values for all events
     today_raw = today_wisc_events.values
     union_raw = union_events.values
-    hilldale_raw = hilldale_events
+    hilldale_raw = hilldale_events.values
+    isthmuss_raw = isthmuss_events.values
 
     # combine all raw data into one np array
-    combined_raw_data = np.concatenate((today_raw, union_raw, hilldale_raw), axis=0)
+    combined_raw_data = np.concatenate((today_raw, union_raw, hilldale_raw, isthmuss_raw), axis=0)
 
     # create and format the json string containing all data
     all_data_as_json = "["
@@ -49,3 +55,6 @@ def get_json_as_string():
         return None
     else:
         return pretty_json_string
+    
+# debug
+# update_data()
