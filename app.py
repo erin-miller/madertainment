@@ -1,20 +1,13 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, jsonify
+from flask_cors import CORS
 
 app = Flask(__name__)
+CORS(app)  # Enable CORS for all routes
 
-@app.route('/')
-def index():
-    return render_template('index.html')
-
-@app.route('/api/data')
+@app.route('/api/data', methods=['GET'])
 def get_data():
-    # Replace this with your actual data retrieval logic
-    data = [
-        {'id': 1, 'name': 'Item 1'},
-        {'id': 2, 'name': 'Item 2'},
-        # Add more data as needed
-    ]
+    data = {'message': 'Hello from Flask!'}
     return jsonify(data)
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(port=5000, debug=True)
