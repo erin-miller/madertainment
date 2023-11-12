@@ -57,4 +57,4 @@ def get_json_as_string():
         return pretty_json_string
     
 # debug
-# update_data()
+update_data()

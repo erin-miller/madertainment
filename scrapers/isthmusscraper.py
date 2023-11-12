@@ -19,7 +19,7 @@ url = "https://isthmus.com/search/event/calendar-of-events/#page="
 urls = []
 
 # number of pages to load. each page has 30 events.
-num_pages = 200
+num_pages = 150
 
 for i in range(num_pages+1):
     if i == 0:
@@ -34,6 +34,7 @@ def get_events():
     with ThreadPoolExecutor(max_workers=50) as executor:
         executor.map(scrape, urls)
 
+    print(len(events))
     return pd.Series(events)
 
 def scrape(url):
@@ -42,7 +43,7 @@ def scrape(url):
     driver_multi.get(url)
 
     # allow page to load
-    time.sleep(random.randint(2, 5))
+    time.sleep(4)
 
     # each page has multiple events
     events_list = driver_multi.find_elements("class name", "event_result")
@@ -79,6 +80,9 @@ def scrape(url):
         
         # add event to events using setting as key
         events[event_setting] = pd.Series(event)
+
+    # quit driver to save ram
+    driver_multi.quit()
 
 
 def convert_to_date(input_string):

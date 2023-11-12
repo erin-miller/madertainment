@@ -70,6 +70,7 @@ def get_events():
         events[event_setting] = pd.Series(event)
 
     # after all links have been scraped, return events as a pandas series
+    web_driver.quit()
     return pd.Series(events)
         
 
