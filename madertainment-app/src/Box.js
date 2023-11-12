@@ -1,4 +1,4 @@
-const Box = ({event}) => {
+const Box = ({ event }) => {
     return (
         <div className="box">
             <h2>{event.name}</h2>
